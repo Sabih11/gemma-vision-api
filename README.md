@@ -47,14 +47,17 @@ curl http://127.0.0.1:8000/health
 
 ## Endpoints
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/health` | Model load status |
-| POST | `/v1/chat` | JSON messages (same shape as `pipeline(text=messages)`) |
-| POST | `/v1/ask` | Form: `question` + `image_url` or uploaded `image` |
+
+| Method | Path       | Description                                             |
+| ------ | ---------- | ------------------------------------------------------- |
+| GET    | `/health`  | Model load status                                       |
+| POST   | `/v1/chat` | JSON messages (same shape as `pipeline(text=messages)`) |
+| POST   | `/v1/ask`  | Form: `question` + `image_url` or uploaded `image`      |
+
 
 ## Hardware
 
 - 31B vision models need a strong GPU; 4-bit often still needs ~20GB+ VRAM.
 - First run downloads weights from Hugging Face.
 - CUDA + `bitsandbytes` on Windows can be unreliable; WSL2/Linux is often easier.
+

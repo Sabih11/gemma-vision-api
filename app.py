@@ -4,14 +4,22 @@ import os
 from contextlib import asynccontextmanager
 from typing import Any
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 from PIL import Image
 from transformers import pipeline
 
+load_dotenv()
+
 MODEL_ID = os.getenv("MODEL_ID", "google/gemma-4-31B-it")
 LOAD_IN_4BIT = os.getenv("LOAD_IN_4BIT", "1") == "1"
+HF_TOKEN = os.getenv("HF_TOKEN") or os.getenv("HUGGING_FACE_HUB_TOKEN")
 pipe = None
+
+
+def _hf_token_configured() -> bool:
+    return bool(HF_TOKEN and HF_TOKEN.strip())
 
 
 def _load_pipeline():
@@ -20,6 +28,8 @@ def _load_pipeline():
         "model": MODEL_ID,
         "device_map": "auto",
     }
+    if _hf_token_configured():
+        kwargs["token"] = HF_TOKEN
     if LOAD_IN_4BIT:
         kwargs["model_kwargs"] = {
             "load_in_4bit": True,
@@ -92,6 +102,7 @@ def health():
         "model_loaded": pipe is not None,
         "model_id": MODEL_ID,
         "load_in_4bit": LOAD_IN_4BIT,
+        "hf_token_configured": _hf_token_configured(),
     }
 
 

@@ -11,7 +11,28 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Log in to Hugging Face if the model is gated:
+### Hugging Face token (gated model)
+
+`google/gemma-4-31B-it` requires a Hugging Face account, accepted license, and an access token.
+
+1. Create a token: [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens) (read access is enough).
+2. Accept the model license: [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it).
+3. Copy the example env file and add your token:
+
+```powershell
+Copy-Item .env.example .env
+# Edit .env and set HF_TOKEN=hf_...
+```
+
+Or set it in the shell (not saved to disk):
+
+```powershell
+$env:HF_TOKEN = "hf_your_token_here"
+```
+
+The app also accepts `HUGGING_FACE_HUB_TOKEN` (same value). `/health` reports `hf_token_configured` without exposing the token.
+
+Alternative: CLI login (writes token to your HF cache, no `.env` needed):
 
 ```powershell
 huggingface-cli login

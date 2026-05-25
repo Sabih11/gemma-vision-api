@@ -1,51 +1,23 @@
 import base64
 import io
 import os
-from contextlib import asynccontextmanager
 from typing import Any
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from openai import OpenAI
 from pydantic import BaseModel, Field
 from PIL import Image
-from transformers import pipeline
 
 load_dotenv()
 
+HF_ROUTER_BASE_URL = os.getenv(
+    "HF_ROUTER_BASE_URL", "https://router.huggingface.co/v1"
+)
 MODEL_ID = os.getenv("MODEL_ID", "google/gemma-4-31B-it")
-LOAD_IN_4BIT = os.getenv("LOAD_IN_4BIT", "1") == "1"
 HF_TOKEN = os.getenv("HF_TOKEN") or os.getenv("HUGGING_FACE_HUB_TOKEN")
-pipe = None
 
-
-def _hf_token_configured() -> bool:
-    return bool(HF_TOKEN and HF_TOKEN.strip())
-
-
-def _load_pipeline():
-    kwargs: dict[str, Any] = {
-        "task": "image-text-to-text",
-        "model": MODEL_ID,
-        "device_map": "auto",
-    }
-    if _hf_token_configured():
-        kwargs["token"] = HF_TOKEN
-    if LOAD_IN_4BIT:
-        kwargs["model_kwargs"] = {
-            "load_in_4bit": True,
-            "torch_dtype": "auto",
-        }
-    return pipeline(**kwargs)
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global pipe
-    pipe = _load_pipeline()
-    yield
-
-
-app = FastAPI(title="Gemma Vision API", lifespan=lifespan)
+app = FastAPI(title="Gemma Vision API")
 
 
 class ContentPart(BaseModel):
@@ -62,57 +34,102 @@ class Message(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: list[Message]
+    stream: bool = False
 
 
-def _normalize_result(raw: Any) -> Any:
-    if isinstance(raw, list) and raw and isinstance(raw[0], dict):
-        if "generated_text" in raw[0]:
-            return raw[0]["generated_text"]
-    return raw
+def _hf_token_configured() -> bool:
+    return bool(HF_TOKEN and HF_TOKEN.strip())
 
 
-def _build_messages(req: ChatRequest) -> list[dict[str, Any]]:
-    out = []
-    for msg in req.messages:
-        content = []
-        for part in msg.content:
-            if part.type == "text":
-                if not part.text:
-                    raise HTTPException(400, "text part requires 'text'")
-                content.append({"type": "text", "text": part.text})
-            elif part.type == "image":
-                if part.url:
-                    content.append({"type": "image", "url": part.url})
-                elif part.image_base64:
-                    content.append({"type": "image", "image": part.image_base64})
-                else:
-                    raise HTTPException(
-                        400, "image part requires 'url' or 'image_base64'"
-                    )
+def _get_client() -> OpenAI:
+    if not _hf_token_configured():
+        raise HTTPException(
+            503,
+            "HF_TOKEN not configured. Copy .env.example to .env and set your token.",
+        )
+    return OpenAI(base_url=HF_ROUTER_BASE_URL, api_key=HF_TOKEN)
+
+
+def _image_url_part(url: str) -> dict[str, Any]:
+    return {"type": "image_url", "image_url": {"url": url}}
+
+
+def _image_base64_part(b64: str) -> dict[str, Any]:
+    if b64.startswith("data:"):
+        url = b64
+    else:
+        url = f"data:image/jpeg;base64,{b64}"
+    return {"type": "image_url", "image_url": {"url": url}}
+
+
+def _parts_to_openai_content(parts: list[ContentPart]) -> list[dict[str, Any]]:
+    content: list[dict[str, Any]] = []
+    for part in parts:
+        if part.type == "text":
+            if not part.text:
+                raise HTTPException(400, "text part requires 'text'")
+            content.append({"type": "text", "text": part.text})
+        elif part.type == "image":
+            if part.url:
+                content.append(_image_url_part(part.url))
+            elif part.image_base64:
+                content.append(_image_base64_part(part.image_base64))
             else:
-                raise HTTPException(400, f"unsupported content type: {part.type}")
-        out.append({"role": msg.role, "content": content})
-    return out
+                raise HTTPException(
+                    400, "image part requires 'url' or 'image_base64'"
+                )
+        else:
+            raise HTTPException(400, f"unsupported content type: {part.type}")
+    return content
+
+
+def _build_openai_messages(req: ChatRequest) -> list[dict[str, Any]]:
+    return [
+        {"role": msg.role, "content": _parts_to_openai_content(msg.content)}
+        for msg in req.messages
+    ]
+
+
+def _completion_result(client: OpenAI, messages: list[dict[str, Any]], stream: bool):
+    try:
+        if stream:
+            stream_resp = client.chat.completions.create(
+                model=MODEL_ID,
+                messages=messages,
+                stream=True,
+            )
+            chunks: list[str] = []
+            for chunk in stream_resp:
+                delta = chunk.choices[0].delta.content
+                if delta:
+                    chunks.append(delta)
+            return "".join(chunks)
+        response = client.chat.completions.create(
+            model=MODEL_ID,
+            messages=messages,
+        )
+        return response.choices[0].message.content
+    except Exception as exc:
+        raise HTTPException(502, f"Hugging Face router error: {exc}") from exc
 
 
 @app.get("/health")
 def health():
     return {
         "ok": True,
-        "model_loaded": pipe is not None,
+        "backend": "huggingface_router",
+        "base_url": HF_ROUTER_BASE_URL,
         "model_id": MODEL_ID,
-        "load_in_4bit": LOAD_IN_4BIT,
         "hf_token_configured": _hf_token_configured(),
     }
 
 
 @app.post("/v1/chat")
 def chat(req: ChatRequest):
-    if pipe is None:
-        raise HTTPException(503, "Model not loaded")
-    messages = _build_messages(req)
-    raw = pipe(text=messages)
-    return {"result": _normalize_result(raw)}
+    client = _get_client()
+    messages = _build_openai_messages(req)
+    result = _completion_result(client, messages, req.stream)
+    return {"result": result}
 
 
 @app.post("/v1/ask")
@@ -120,9 +137,8 @@ async def ask(
     question: str = Form(...),
     image: UploadFile | None = File(default=None),
     image_url: str | None = Form(default=None),
+    stream: bool = Form(default=False),
 ):
-    if pipe is None:
-        raise HTTPException(503, "Model not loaded")
     if not image and not image_url:
         raise HTTPException(400, "Provide 'image' file or 'image_url'")
 
@@ -133,11 +149,13 @@ async def ask(
         buf = io.BytesIO()
         img.save(buf, format="JPEG")
         b64 = base64.b64encode(buf.getvalue()).decode("ascii")
-        content.append({"type": "image", "image": b64})
+        content.append(_image_base64_part(b64))
     else:
-        content.append({"type": "image", "url": image_url})
+        content.append(_image_url_part(image_url))
 
     content.append({"type": "text", "text": question})
     messages = [{"role": "user", "content": content}]
-    raw = pipe(text=messages)
-    return {"result": _normalize_result(raw)}
+
+    client = _get_client()
+    result = _completion_result(client, messages, stream)
+    return {"result": result}

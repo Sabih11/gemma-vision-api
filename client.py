@@ -23,7 +23,7 @@ def chat(base: str, image_url: str, question: str) -> None:
             }
         ]
     }
-    r = requests.post(f"{base.rstrip('/')}/v1/chat", json=payload, timeout=600)
+    r = requests.post(f"{base.rstrip('/')}/v1/chat", json=payload, timeout=120)
     r.raise_for_status()
     print(json.dumps(r.json(), indent=2))
 
@@ -32,7 +32,7 @@ def ask(base: str, image_url: str, question: str) -> None:
     r = requests.post(
         f"{base.rstrip('/')}/v1/ask",
         data={"question": question, "image_url": image_url},
-        timeout=600,
+        timeout=120,
     )
     r.raise_for_status()
     print(json.dumps(r.json(), indent=2))

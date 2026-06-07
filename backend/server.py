@@ -64,7 +64,7 @@ CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 app = FastAPI(title="Omni Multimodal AI API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in CORS_ORIGINS if o.strip()],
+    allow_origin_regex=".*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,6 +78,68 @@ db = mongo_client[DB_NAME]
 users_col = db["users"]
 sessions_col = db["user_sessions"]
 history_col = db["history"]
+acceptances_col = db["terms_acceptances"]
+
+TERMS_VERSION = "1.0"
+TERMS_EFFECTIVE_DATE = "2026-06-07"
+TERMS_TEXT = """\
+# Omni — Terms of Service
+
+**Version 1.0 · Effective June 7, 2026**
+
+These Terms of Service ("Terms") govern your use of Omni ("the Service"), a multimodal AI workspace that performs image recognition, audio transcription, and result sharing. By signing in to or using the Service, you agree to be bound by these Terms.
+
+## 1. The Service
+Omni lets authenticated users upload images for AI analysis (via the Gemma vision model), upload or record audio for transcription (via OpenAI Whisper), view a personal history of their results, and share results to WhatsApp via standard `wa.me` links.
+
+## 2. Eligibility & Accounts
+You must be at least 13 years old to use the Service. You are responsible for everything that happens under your account and for keeping your authentication credentials safe.
+
+## 3. Acceptable Use
+You agree NOT to use the Service to:
+- upload, transcribe, or analyse content that is illegal, defamatory, hateful, sexually explicit involving minors, or that infringes anyone's rights;
+- upload content containing sensitive personal data (medical records, government IDs, payment data) of yourself or any third party;
+- attempt to reverse-engineer, scrape, overload, or attack the Service or its underlying AI providers;
+- impersonate any person or misrepresent your affiliation.
+
+## 4. Third-Party Processing
+By submitting content, you understand that:
+- **Images** are sent to HuggingFace's inference router and processed by Google's Gemma vision model.
+- **Audio** is sent to OpenAI's Whisper API for transcription.
+- These providers process your content under their own terms of service.
+
+We do not control what those providers do with submitted content beyond their public policies.
+
+## 5. Your Content
+You retain ownership of content you upload. You grant Omni a limited, non-exclusive license to transmit that content to the AI providers strictly to deliver the Service to you, and to store the resulting outputs in your private history.
+
+You may delete any history item from your account at any time.
+
+## 6. Sharing
+Sharing to WhatsApp opens a standard `wa.me/?text=` link; the resulting message and its delivery are entirely outside Omni's control.
+
+## 7. Privacy
+We store: your Google identity (id, email, name, profile picture), session tokens, and your prompts + AI responses (your "history"). We do NOT sell personal data. Sessions expire after 7 days.
+
+## 8. No Warranty
+The Service is provided "AS IS" without warranties of any kind. AI outputs may be inaccurate, biased, or incomplete; you must verify critical information independently.
+
+## 9. Limitation of Liability
+To the maximum extent permitted by law, Omni shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use of the Service.
+
+## 10. Termination
+You may stop using the Service at any time by clicking Logout. We may suspend or terminate accounts that violate these Terms, with or without notice.
+
+## 11. Changes
+We may update these Terms. If we make material changes, you will be asked to re-accept the latest version on your next sign-in.
+
+## 12. Contact
+Questions about these Terms can be sent to the email address you find on your deployment page.
+
+---
+
+*By clicking "I agree" you confirm that you have read and accepted these Terms.*
+"""
 
 
 # ---------- Helpers ----------
@@ -464,7 +526,54 @@ async def health():
         "emergent_llm_configured": bool(EMERGENT_LLM_KEY),
         "model_id": MODEL_ID,
         "audio_model_id": AUDIO_MODEL_ID,
+        "terms_version": TERMS_VERSION,
     }
+
+
+# ---------- Legal / Terms ----------
+@api.get("/legal/terms")
+async def get_terms():
+    return {
+        "version": TERMS_VERSION,
+        "effective_date": TERMS_EFFECTIVE_DATE,
+        "content": TERMS_TEXT,
+    }
+
+
+@api.get("/legal/status")
+async def terms_status(user: dict = Depends(_current_user)):
+    rec = await acceptances_col.find_one(
+        {"user_id": user["user_id"], "version": TERMS_VERSION},
+        {"_id": 0},
+    )
+    return {
+        "current_version": TERMS_VERSION,
+        "accepted": bool(rec),
+        "accepted_at": rec.get("accepted_at") if rec else None,
+    }
+
+
+class AcceptTermsRequest(BaseModel):
+    version: str
+
+
+@api.post("/legal/accept")
+async def accept_terms(payload: AcceptTermsRequest, user: dict = Depends(_current_user)):
+    if payload.version != TERMS_VERSION:
+        raise HTTPException(400, f"Version mismatch. Current version is {TERMS_VERSION}.")
+    accepted_at = utcnow().isoformat()
+    await acceptances_col.update_one(
+        {"user_id": user["user_id"], "version": TERMS_VERSION},
+        {
+            "$set": {
+                "user_id": user["user_id"],
+                "version": TERMS_VERSION,
+                "accepted_at": accepted_at,
+            }
+        },
+        upsert=True,
+    )
+    return {"ok": True, "version": TERMS_VERSION, "accepted_at": accepted_at}
 
 
 app.include_router(api)

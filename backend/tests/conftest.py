@@ -65,6 +65,7 @@ def user_a(mongo):
     mongo["users"].delete_many({"user_id": u["user_id"]})
     mongo["user_sessions"].delete_many({"user_id": u["user_id"]})
     mongo["history"].delete_many({"user_id": u["user_id"]})
+    mongo["terms_acceptances"].delete_many({"user_id": u["user_id"]})
 
 
 @pytest.fixture(scope="session")
@@ -74,6 +75,7 @@ def user_b(mongo):
     mongo["users"].delete_many({"user_id": u["user_id"]})
     mongo["user_sessions"].delete_many({"user_id": u["user_id"]})
     mongo["history"].delete_many({"user_id": u["user_id"]})
+    mongo["terms_acceptances"].delete_many({"user_id": u["user_id"]})
 
 
 @pytest.fixture

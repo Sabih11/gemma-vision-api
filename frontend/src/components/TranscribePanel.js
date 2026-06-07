@@ -7,6 +7,7 @@ import WhatsAppShare from './WhatsAppShare';
 
 export default function TranscribePanel({ onSaved }) {
   const [file, setFile] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(null);
   const [recording, setRecording] = useState(false);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,20 +15,21 @@ export default function TranscribePanel({ onSaved }) {
   const [elapsed, setElapsed] = useState(0);
   const mediaRef = useRef(null);
   const chunksRef = useRef([]);
-  const audioUrlRef = useRef(null);
   const timerRef = useRef(null);
 
   useEffect(() => () => {
-    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
     if (timerRef.current) clearInterval(timerRef.current);
   }, []);
+
+  useEffect(() => () => {
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+  }, [audioUrl]);
 
   const onFile = (e) => {
     const f = e.target.files?.[0];
     if (!f) return;
     setFile(f);
-    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
-    audioUrlRef.current = URL.createObjectURL(f);
+    setAudioUrl(URL.createObjectURL(f));
     setText('');
     setError('');
   };
@@ -46,8 +48,7 @@ export default function TranscribePanel({ onSaved }) {
         const ext = mime.includes('webm') ? 'webm' : 'm4a';
         const f = new File([blob], `recording.${ext}`, { type: mime });
         setFile(f);
-        if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
-        audioUrlRef.current = URL.createObjectURL(f);
+        setAudioUrl(URL.createObjectURL(f));
         stream.getTracks().forEach((t) => t.stop());
       };
       rec.start();
@@ -73,10 +74,7 @@ export default function TranscribePanel({ onSaved }) {
     setFile(null);
     setText('');
     setError('');
-    if (audioUrlRef.current) {
-      URL.revokeObjectURL(audioUrlRef.current);
-      audioUrlRef.current = null;
-    }
+    setAudioUrl(null);
   };
 
   const submit = async () => {
@@ -214,10 +212,10 @@ export default function TranscribePanel({ onSaved }) {
             </div>
           )}
 
-          {audioUrlRef.current && (
+          {audioUrl && (
             <audio
               data-testid="transcribe-audio-preview"
-              src={audioUrlRef.current}
+              src={audioUrl}
               controls
               className="w-full rounded-xl"
             />

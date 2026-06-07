@@ -111,7 +111,16 @@ export default function Login() {
       {/* Footer */}
       <footer className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-5 pb-5 text-[11px] text-zinc-500 sm:px-8 sm:pb-6">
         <span>© Omni AI · {new Date().getFullYear()}</span>
-        <span className="hidden font-mono uppercase tracking-[0.18em] sm:inline">Built with care</span>
+        <div className="flex items-center gap-4">
+          <a
+            href="/terms"
+            data-testid="login-terms-link"
+            className="font-mono uppercase tracking-[0.18em] transition-colors hover:text-zinc-200"
+          >
+            Terms
+          </a>
+          <span className="hidden font-mono uppercase tracking-[0.18em] sm:inline">Built with care</span>
+        </div>
       </footer>
     </div>
   );
@@ -157,10 +166,10 @@ function PreviewCard() {
           </div>
         </div>
         <div className="space-y-3 p-6 font-mono text-xs leading-relaxed text-zinc-300">
-          <Line tag="vision">analyse_image(<span className="text-blue-300">"./cat.jpg"</span>)</Line>
+          <Line tag="vision">{'analyse_image('}<span className="text-blue-300">{'"./cat.jpg"'}</span>{')'}</Line>
           <Line tag="→" muted>orange tabby · sitting · soft daylight</Line>
-          <Line tag="audio">transcribe(<span className="text-rose-300">"./voice.mp3"</span>)</Line>
-          <Line tag="→" muted>"meeting starts at 5pm sharp"</Line>
+          <Line tag="audio">{'transcribe('}<span className="text-rose-300">{'"./voice.mp3"'}</span>{')'}</Line>
+          <Line tag="→" muted>{'"meeting starts at 5pm sharp"'}</Line>
           <Line tag="share">share_whatsapp(result)</Line>
           <Line tag="✓" success>shared.</Line>
         </div>

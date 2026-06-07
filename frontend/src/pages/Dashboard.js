@@ -23,7 +23,18 @@ export default function Dashboard() {
     }
   }, []);
 
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await api.get('/history');
+        if (!cancelled) setHistory(data || []);
+      } catch (e) {
+        console.error('history fetch failed', e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-zinc-950 text-white" data-testid="dashboard-page">
@@ -211,9 +222,20 @@ export default function Dashboard() {
       </AnimatePresence>
 
       <footer className="relative z-10 mt-6 border-t border-white/5 bg-zinc-950/50 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-1 px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 sm:flex-row sm:items-center sm:px-6 sm:py-4">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 sm:flex-row sm:items-center sm:px-6 sm:py-4">
           <span>Omni · Gemma Vision · Whisper-1 · Emergent Auth</span>
-          <span>v1.0 · iOS app available</span>
+          <div className="flex items-center gap-4">
+            <a
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="dashboard-terms-link"
+              className="transition-colors hover:text-zinc-200"
+            >
+              Terms
+            </a>
+            <span>v1.0 · iOS app available</span>
+          </div>
         </div>
       </footer>
     </div>

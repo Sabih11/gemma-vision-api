@@ -4,6 +4,8 @@ import { AuthProvider, useAuth } from './lib/auth';
 import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import Dashboard from './pages/Dashboard';
+import Terms from './pages/Terms';
+import TermsGate from './components/TermsGate';
 
 function Protected({ children }) {
   const { user, loading } = useAuth();
@@ -34,11 +36,14 @@ function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/terms" element={<Terms />} />
       <Route
         path="/dashboard"
         element={
           <Protected>
-            <Dashboard />
+            <TermsGate>
+              <Dashboard />
+            </TermsGate>
           </Protected>
         }
       />

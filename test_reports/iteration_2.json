@@ -1,0 +1,39 @@
+{
+  "summary": "Backend-only testing of Terms & Conditions feature completed against the deployed external URL. All 12 new pytest tests for /api/legal/terms, /api/legal/status, /api/legal/accept passed (100%). Full regression also re-run: 27/27 pytest tests pass overall (12 new + 15 prior). Verified version='1.0', non-empty content, auth gating (401), fresh user not_accepted, accept happy path, version mismatch 400, idempotency (single row per user+version after double-accept), cross-tenant isolation, /api/health surfaces terms_version, no '_id' leakage, and that previously working endpoints (/api/health, /api/auth/me, /api/history, /api/transcribe) still work. All TEST_ seeded users/sessions/history/terms_acceptances cleaned up after run (mongo counts all 0).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_legal_terms.py",
+    "/app/backend/tests/test_omni_api.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/app/test_reports/pytest/pytest_legal_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "POST /api/legal/accept uses Mongo $set with upsert keyed on (user_id, version). Idempotency confirmed, but note that re-accepting OVERWRITES accepted_at to the latest timestamp. If the product wants to retain the FIRST acceptance timestamp, switch to $setOnInsert for accepted_at (and $set only updated_at). Currently calling accept again silently changes the audit timestamp.",
+    "POST /api/legal/accept has no $setOnInsert/$set split for created_at; the inserted doc only stores user_id, version, accepted_at. Consider adding a first_accepted_at via $setOnInsert if product needs immutable audit history.",
+    "GET /api/legal/status only checks for presence of a row at the CURRENT version. If TERMS_VERSION bumps in future, an existing user that accepted v1.0 will see accepted:false (correct intent) but there is no surface of prior acceptance history to the client — acceptable for MVP, just flagging.",
+    "TERMS_TEXT is a hardcoded Python string in server.py. Fine for v1, but future versioning will require code deploys; consider seeding into Mongo + admin-only endpoint to update.",
+    "AcceptTermsRequest only validates `version` as a free string. A stricter Literal['1.0'] (or a known-versions enum) would surface mismatch as 422 from Pydantic instead of the manual 400 check, but the current 400 behaviour matches the spec exactly so this is preference only.",
+    "No rate limiting on /legal/accept (same caveat as other endpoints noted in iteration 1)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_legal_terms.py (new)",
+    "/app/backend/tests/conftest.py (added terms_acceptances cleanup for user_a/user_b fixtures)"
+  ],
+  "success_rate": {"backend": "100% (27/27 incl. legal/terms)", "frontend": "skipped (not requested)"},
+  "test_credentials": "Per /app/memory/test_credentials.md — Emergent Google OAuth in prod; tests seed fresh TEST_ users + bearer session_tokens directly via pymongo and tear them down.",
+  "seed_data_creation": "Per-test function-scoped `fresh_user` fixture seeds a unique TEST_user_legal_* + TEST_token_legal_* in users + user_sessions, plus 2 isolation-test users (TEST_user_iso_A/B). All cleaned up in fixture teardown — verified post-run: 0 TEST_ docs remaining across users / user_sessions / history / terms_acceptances collections.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend for Terms feature is fully green. Regression suite is /app/backend/tests/ (run: `pytest /app/backend/tests/ -v --junitxml=/app/test_reports/pytest/pytest_results.xml`). Frontend Terms-gating + /terms page UI NOT tested (testing_type=backend only). When frontend testing is requested next, recommend Playwright flows: (1) fresh logged-in user lands on dashboard and is gated by Terms modal/page, (2) Accept button calls POST /api/legal/accept and unlocks dashboard, (3) /terms route renders full content from GET /api/legal/terms publicly, (4) refresh after accept keeps user un-gated (GET /api/legal/status accepted:true).",
+  "rca of the issue": "N/A — no issues found. All requested behaviours verified end-to-end against the external preview URL."
+}

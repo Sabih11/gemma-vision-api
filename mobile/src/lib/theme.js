@@ -1,0 +1,15 @@
+export const theme = {
+  bg: '#09090b',
+  surface: '#18181b',
+  surface2: 'rgba(255,255,255,0.04)',
+  border: 'rgba(255,255,255,0.10)',
+  text: '#fafafa',
+  textSubtle: '#a1a1aa',
+  textMuted: '#71717a',
+  blue: '#3b82f6',
+  indigo: '#6366f1',
+  rose: '#f43f5e',
+  red: '#ef4444',
+  green: '#25D366',
+  fuchsia: '#d946ef',
+};

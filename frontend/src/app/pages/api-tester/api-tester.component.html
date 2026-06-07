@@ -1,0 +1,202 @@
+<div class="page">
+  <div class="bg-orbs" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+  </div>
+
+  @if (pageReady()) {
+    <div class="content" [@pageEnter]>
+    <header class="hero animate-in">
+      <div class="badge">Multimodal</div>
+      <h1>Gemma API Tester</h1>
+      <p class="subtitle">
+        Send images and audio through your local FastAPI proxy to Hugging Face.
+      </p>
+      @if (health(); as h) {
+        <div class="status-pills">
+          <span class="pill" [class.ok]="h.hf_token_configured">
+            <span class="dot"></span>
+            {{ h.hf_token_configured ? 'Token ready' : 'Token missing' }}
+          </span>
+          <span class="pill muted">{{ h.backend }}</span>
+        </div>
+      }
+    </header>
+
+    <div class="grid">
+      <section class="card animate-in">
+        <div class="card-head">
+          <span class="icon">◇</span>
+          <h2>Model</h2>
+        </div>
+        <input
+          type="text"
+          class="input"
+          [(ngModel)]="modelId"
+          name="modelId"
+          placeholder="google/gemma-4-..."
+        />
+        <div class="chip-row">
+          <button type="button" class="chip" (click)="setModelForImages()">
+            Image · 31B
+          </button>
+          <button type="button" class="chip" (click)="setModelForAudio()">
+            Audio · E2B
+          </button>
+        </div>
+      </section>
+
+      <section class="card animate-in">
+        <div class="card-head">
+          <span class="icon">?</span>
+          <h2>Question</h2>
+        </div>
+        <textarea
+          class="input textarea"
+          rows="3"
+          [(ngModel)]="question"
+          name="question"
+          placeholder="What do you see or hear?"
+        ></textarea>
+      </section>
+
+      <section class="card card-wide animate-in">
+        <div class="card-head">
+          <span class="icon">🖼</span>
+          <h2>Image</h2>
+        </div>
+        <div class="toggles">
+          <label class="toggle" [class.active]="useImageUrl">
+            <input type="checkbox" [(ngModel)]="useImageUrl" name="useImageUrl" />
+            <span>URL</span>
+          </label>
+          <label class="toggle" [class.active]="useImageFile">
+            <input type="checkbox" [(ngModel)]="useImageFile" name="useImageFile" />
+            <span>Upload</span>
+          </label>
+        </div>
+        @if (useImageUrl) {
+          <div @panel class="field-block">
+            <input
+              type="url"
+              class="input"
+              [(ngModel)]="imageUrl"
+              name="imageUrl"
+              placeholder="https://..."
+            />
+          </div>
+        }
+        @if (useImageFile) {
+          <div @panel class="dropzone">
+            <input
+              type="file"
+              accept="image/*"
+              id="imageFile"
+              (change)="onImageFileChange($event)"
+            />
+            <label for="imageFile" class="dropzone-label">
+              <span class="drop-icon">↑</span>
+              <span>Drop or click to upload image</span>
+            </label>
+            @if (imagePreview) {
+              <div @panel class="preview-wrap">
+                <img [src]="imagePreview" alt="Preview" class="preview" />
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="card card-wide animate-in">
+        <div class="card-head">
+          <span class="icon">♪</span>
+          <h2>Audio</h2>
+        </div>
+        <div class="toggles">
+          <label class="toggle" [class.active]="useAudioUrl">
+            <input type="checkbox" [(ngModel)]="useAudioUrl" name="useAudioUrl" />
+            <span>URL</span>
+          </label>
+          <label class="toggle" [class.active]="useAudioFile">
+            <input
+              type="checkbox"
+              [(ngModel)]="useAudioFile"
+              name="useAudioFile"
+            />
+            <span>Upload</span>
+          </label>
+        </div>
+        @if (useAudioUrl) {
+          <div @panel class="field-block">
+            <input
+              type="url"
+              class="input"
+              [(ngModel)]="audioUrl"
+              name="audioUrl"
+              placeholder="https://.../sample.wav"
+            />
+          </div>
+        }
+        @if (useAudioFile) {
+          <div @panel class="dropzone">
+            <input
+              type="file"
+              accept="audio/*"
+              id="audioFile"
+              (change)="onAudioFileChange($event)"
+            />
+            <label for="audioFile" class="dropzone-label">
+              <span class="drop-icon">♪</span>
+              <span>Drop or click to upload audio</span>
+            </label>
+            @if (audioPreviewUrl) {
+              <div @panel class="preview-wrap">
+                <audio [src]="audioPreviewUrl" controls class="audio-bar"></audio>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </div>
+
+    <div class="actions animate-in">
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="submit()"
+        [disabled]="loading()"
+        [class.loading]="loading()"
+      >
+        @if (loading()) {
+          <span class="spinner"></span>
+          <span>Thinking…</span>
+        } @else {
+          <span>Send to API</span>
+          <span class="btn-glow"></span>
+        }
+      </button>
+    </div>
+
+    @if (error()) {
+      <section class="card card-alert animate-in" @shake>
+        <div class="card-head">
+          <span class="icon alert">!</span>
+          <h2>Error</h2>
+        </div>
+        <pre class="output">{{ error() }}</pre>
+      </section>
+    }
+
+    @if (result()) {
+      <section class="card card-success animate-in" @panel>
+        <div class="card-head">
+          <span class="icon success">✓</span>
+          <h2>Response</h2>
+        </div>
+        <pre class="output typing">{{ result() }}</pre>
+      </section>
+    }
+    </div>
+  }
+</div>

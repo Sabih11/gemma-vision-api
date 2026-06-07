@@ -2,35 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root { height: 100%; }
-body {
-  margin: 0;
-  font-family: 'IBM Plex Sans', sans-serif;
-  background: #FFFFFF;
-  color: #000;
+html, body, #root {
+  height: 100%;
+  background: #09090b;
+  color: white;
+  font-family: 'Manrope', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-::selection { background: #002FA7; color: white; }
+::selection { background: rgba(59,130,246,0.45); color: white; }
 
-/* Brutalist button press effect helper */
-.btn-press {
-  transition: transform 120ms ease, box-shadow 120ms ease;
-}
-.btn-press:active {
-  transform: translate(2px, 2px);
+/* Subtle grain overlay */
+.bg-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
 }
 
-/* Recording pulse */
-@keyframes rec-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,36,0,0.7); }
-  50% { box-shadow: 0 0 0 12px rgba(255,36,0,0); }
+/* Ambient gradient blobs */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.45;
+  pointer-events: none;
 }
-.recording { animation: rec-pulse 1.4s infinite; }
 
-/* Grid noise background for login */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
-  background-size: 48px 48px;
+/* Shimmer skeleton */
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 100%);
+  background-size: 200% 100%;
 }
+
+/* Subtle scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* Audio element styling for dark UI */
+audio { filter: invert(0.9) hue-rotate(180deg); }

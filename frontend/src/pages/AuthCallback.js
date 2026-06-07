@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuth } from '../lib/auth';
@@ -24,7 +26,6 @@ export default function AuthCallback() {
       try {
         const { data } = await api.post('/auth/google', { session_id: sessionId });
         setUser(data.user);
-        // Clean URL fragment then go to dashboard
         window.history.replaceState({}, '', '/dashboard');
         navigate('/dashboard', { replace: true, state: { user: data.user } });
       } catch (e) {
@@ -35,10 +36,15 @@ export default function AuthCallback() {
   }, [navigate, setUser]);
 
   return (
-    <div className="h-screen flex items-center justify-center bg-white">
-      <div className="text-xs font-mono uppercase tracking-widest text-zinc-600">
-        Signing you in…
-      </div>
+    <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 backdrop-blur-xl"
+      >
+        <Loader2 size={16} className="animate-spin text-blue-300" />
+        <span className="font-mono text-xs uppercase tracking-[0.22em] text-zinc-300">Signing you in…</span>
+      </motion.div>
     </div>
   );
 }

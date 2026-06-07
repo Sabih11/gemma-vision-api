@@ -1,22 +1,25 @@
 import React from 'react';
-import { WhatsappLogo } from '@phosphor-icons/react';
+import { motion } from 'framer-motion';
+import { Share2 } from 'lucide-react';
+import { tap } from '../lib/motion';
 
-export default function WhatsAppShare({ text, label = 'WhatsApp', testId = 'whatsapp-share-button' }) {
+export default function WhatsAppShare({ text, label = 'Share to WhatsApp', testId = 'whatsapp-share-button' }) {
   const onClick = () => {
     const trimmed = (text || '').toString().slice(0, 3500);
     const url = `https://wa.me/?text=${encodeURIComponent(trimmed)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
   return (
-    <button
+    <motion.button
       type="button"
       onClick={onClick}
       disabled={!text}
       data-testid={testId}
-      className="btn-press bg-whats text-white border-2 border-black px-3 py-2 font-bold uppercase tracking-wide text-xs flex items-center gap-2 shadow-brutSm hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed"
+      {...tap}
+      className="group inline-flex items-center gap-2 rounded-full border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-xs font-semibold text-[#25D366] transition-all hover:border-[#25D366] hover:bg-[#25D366] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <WhatsappLogo size={16} weight="bold" />
+      <Share2 size={14} className="transition-transform group-hover:rotate-12" />
       {label}
-    </button>
+    </motion.button>
   );
 }

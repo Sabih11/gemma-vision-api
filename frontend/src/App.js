@@ -14,9 +14,12 @@ function Protected({ children }) {
 
 function FullPageSpinner() {
   return (
-    <div className="h-screen flex items-center justify-center bg-white">
-      <div className="text-xs font-mono uppercase tracking-widest text-zinc-600" data-testid="loading-indicator">
-        Loading…
+    <div className="h-screen flex items-center justify-center bg-zinc-950">
+      <div className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-3 backdrop-blur-xl">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-blue-400" />
+        <span data-testid="loading-indicator" className="font-mono text-xs uppercase tracking-[0.22em] text-zinc-300">
+          Loading…
+        </span>
       </div>
     </div>
   );

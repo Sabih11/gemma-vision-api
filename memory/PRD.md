@@ -27,12 +27,13 @@
 - iOS-native parity for all of the above.
 
 ## What's been implemented (Jun 7, 2026)
-- Backend `/api` endpoints: `health`, `auth/google`, `auth/me`, `auth/logout`, `chat`, `ask`, `transcribe`, `history`, `history/{id}` (DELETE). 
-- React frontend: brutalist login page, dashboard with Image / Audio tabs, history sidebar, WhatsApp share on every result and history item.
+- Backend `/api` endpoints: `health`, `auth/google`, `auth/me`, `auth/logout`, `chat`, `ask`, `transcribe`, `history`, `history/{id}` (DELETE), `legal/terms` (public), `legal/status` (auth), `legal/accept` (auth).
+- React frontend: brutalist→premium dark UI (Outfit + Manrope + JetBrains Mono, blue/indigo/fuchsia ambient blobs, Framer Motion entrance + hover + recording-pulse animations), login page, dashboard with Image/Audio tabs, history sidebar (desktop) + mobile drawer, WhatsApp share on every result and history item, **`/terms` page** with full T&C, **`TermsGate` modal** that blocks dashboard until a user accepts version 1.0.
+- Mongo collections: `users`, `user_sessions`, `history`, `terms_acceptances` (upsert keyed on user_id + version).
 - iOS Swift project (`/app/ios/Omni/`): `OmniApp`, `LoginView`, `DashboardView`, `VisionView`, `TranscribeView`, `HistoryView`, `ShareSheet`, `APIClient`, `AuthManager`, `KeychainStore`.
 - Auth via Emergent Google OAuth (cookie + Bearer); session token stored in iOS Keychain.
 - WhatsApp share via `wa.me` link (web) and `UIActivityViewController` (iOS).
-- Full backend testing: 15/15 pytest tests passed via `testing_agent_v3` (iteration_1).
+- **Full backend testing: 27/27 pytest tests passed (iteration_2.json)** — includes new T&C suite plus full regression of every prior endpoint.
 
 ## Prioritized backlog
 **P0 (next)**

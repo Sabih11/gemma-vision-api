@@ -106,20 +106,20 @@ export default function TranscribePanel({ onSaved }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-2xl md:p-8"
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-2xl sm:p-6 md:p-8"
       data-testid="transcribe-panel"
     >
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 sm:mb-6">
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/30 bg-rose-500/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-300">
             <AudioLines size={11} /> Audio
           </span>
-          <h2 className="font-heading text-2xl font-medium tracking-tight">Audio Transcribe</h2>
+          <h2 className="font-heading text-xl font-medium tracking-tight sm:text-2xl">Audio Transcribe</h2>
         </div>
-        <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Whisper-1</span>
+        <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500 sm:text-xs">Whisper-1</span>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
         <div className="flex min-h-[240px] flex-col items-center justify-center gap-4 rounded-2xl border border-white/10 bg-zinc-950/40 p-6 text-center">
           <AnimatePresence mode="wait">
             {!recording ? (

@@ -62,20 +62,20 @@ export default function VisionPanel({ onSaved }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-2xl md:p-8"
+      className="relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-2xl sm:p-6 md:p-8"
       data-testid="vision-panel"
     >
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 sm:mb-6">
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/30 bg-blue-500/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-blue-300">
             <Sparkles size={11} /> Image
           </span>
-          <h2 className="font-heading text-2xl font-medium tracking-tight">Image Recognition</h2>
+          <h2 className="font-heading text-xl font-medium tracking-tight sm:text-2xl">Image Recognition</h2>
         </div>
-        <span className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Gemma Vision</span>
+        <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-zinc-500 sm:text-xs">Gemma Vision</span>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
         <label
           htmlFor="vision-file"
           onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, Mic, Image as ImageIcon, MessageSquare } from 'lucide-react';
 import { easeOut } from '../lib/motion';
 
 export default function Login() {
@@ -12,12 +12,11 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-zinc-950 text-white" data-testid="login-page">
+    <div className="relative flex min-h-screen w-full flex-col overflow-hidden bg-zinc-950 text-white" data-testid="login-page">
       {/* Ambient blobs */}
-      <div className="blob bg-blue-700 left-[-15%] top-[-10%] h-[480px] w-[480px]" />
-      <div className="blob bg-indigo-500 right-[-10%] top-[20%] h-[420px] w-[420px]" />
-      <div className="blob bg-fuchsia-600 left-[35%] bottom-[-20%] h-[420px] w-[420px] opacity-30" />
-      <div className="bg-grain relative" />
+      <div className="blob bg-blue-700 left-[-15%] top-[-15%] h-[420px] w-[420px]" />
+      <div className="blob bg-indigo-500 right-[-10%] top-[10%] h-[380px] w-[380px]" />
+      <div className="blob bg-fuchsia-600 left-[20%] bottom-[-25%] h-[420px] w-[420px] opacity-30" />
 
       {/* Background image with heavy blur */}
       <div
@@ -30,80 +29,99 @@ export default function Login() {
       />
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/70 to-zinc-950" />
 
-      {/* Content */}
-      <div className="relative z-10 grid min-h-screen grid-cols-1 lg:grid-cols-2">
-        {/* Left: form */}
-        <div className="flex flex-col justify-between p-10 md:p-16">
+      {/* Top brand bar */}
+      <header className="relative z-20 mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 sm:py-6">
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: easeOut }}
+          className="flex items-center gap-3"
+        >
+          <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-glow">
+            <span className="font-heading text-base font-bold">O</span>
+            <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-white/20" />
+          </div>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-400">Omni · v1.0</span>
+        </motion.div>
+        <span className="hidden text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-500 sm:block">
+          Multimodal AI
+        </span>
+      </header>
+
+      {/* Main split */}
+      <main className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-10 px-5 pb-10 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:pb-16">
+        {/* Left: copy + CTA */}
+        <section className="flex flex-col items-start">
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: easeOut }}
-            className="flex items-center gap-3"
+            transition={{ duration: 0.5, ease: easeOut, delay: 0.1 }}
+            className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-zinc-300 backdrop-blur-xl"
           >
-            <div className="relative grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-glow">
-              <span className="font-heading text-lg font-bold">O</span>
-              <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-white/20" />
-            </div>
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Omni · v1.0</span>
+            <Sparkles size={12} className="text-blue-400" />
+            Vision · Voice · Text · in one place
           </motion.div>
 
-          <div className="max-w-md">
-            <motion.div
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-zinc-300 backdrop-blur-xl"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: easeOut, delay: 0.15 }}
-            >
-              <Sparkles size={12} className="text-blue-400" />
-              Multimodal AI · Vision · Voice · Text
-            </motion.div>
-            <h1 className="font-heading text-5xl font-semibold tracking-tight md:text-6xl">
-              Sign in to <br />
-              <span className="bg-gradient-to-br from-blue-400 via-indigo-300 to-fuchsia-400 bg-clip-text text-transparent">
-                OMNI.
-              </span>
-            </h1>
-            <p className="mt-5 max-w-sm text-base leading-relaxed text-zinc-400">
-              See images, transcribe audio, ask anything. Sign in to start your
-              multimodal workspace — and share any result to WhatsApp in one tap.
-            </p>
+          <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+            Sign in to <br />
+            <span className="bg-gradient-to-br from-blue-400 via-indigo-300 to-fuchsia-400 bg-clip-text text-transparent">
+              OMNI.
+            </span>
+          </h1>
 
-            <motion.button
-              onClick={handleLogin}
-              data-testid="login-google-button"
-              initial={false}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              className="group relative mt-10 flex w-full items-center justify-between overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] px-6 py-4 text-sm font-semibold text-white backdrop-blur-xl transition-colors hover:bg-white/[0.08]"
-            >
-              <span className="absolute inset-y-0 -left-12 w-12 -skew-x-12 bg-white/10 opacity-0 transition-all duration-700 group-hover:left-[105%] group-hover:opacity-100" />
-              <span className="flex items-center gap-3">
-                <GoogleGlyph />
-                Continue with Google
-              </span>
-              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-            </motion.button>
+          <p className="mt-5 max-w-md text-base leading-relaxed text-zinc-400 sm:text-lg">
+            See images, transcribe audio, ask anything — then share to WhatsApp in one tap.
+            Your multimodal AI workspace, on web and iOS.
+          </p>
 
-            <p className="mt-5 text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
-              Powered by Emergent Auth · 7-day sessions
-            </p>
+          {/* Feature row */}
+          <div className="mt-7 grid w-full max-w-md grid-cols-3 gap-3">
+            <FeaturePill icon={<ImageIcon size={14} />} label="Vision" />
+            <FeaturePill icon={<Mic size={14} />} label="Whisper" />
+            <FeaturePill icon={<MessageSquare size={14} />} label="Chat" />
           </div>
 
-          <div className="text-xs font-medium text-zinc-500">
-            © Omni AI · {new Date().getFullYear()}
-          </div>
-        </div>
+          <motion.button
+            onClick={handleLogin}
+            data-testid="login-google-button"
+            initial={false}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative mt-8 flex w-full max-w-md items-center justify-between overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] px-6 py-4 text-sm font-semibold text-white backdrop-blur-xl transition-colors hover:bg-white/[0.10]"
+          >
+            <span className="pointer-events-none absolute inset-y-0 -left-12 w-12 -skew-x-12 bg-white/10 opacity-0 transition-all duration-700 group-hover:left-[105%] group-hover:opacity-100" />
+            <span className="flex items-center gap-3">
+              <GoogleGlyph />
+              Continue with Google
+            </span>
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+          </motion.button>
 
-        {/* Right: visual */}
-        <motion.div
-          className="relative hidden items-center justify-center lg:flex"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, ease: easeOut, delay: 0.1 }}
-        >
+          <p className="mt-4 text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-500">
+            Powered by Emergent Auth · 7-day sessions
+          </p>
+        </section>
+
+        {/* Right: preview */}
+        <section className="hidden items-center justify-center lg:flex">
           <PreviewCard />
-        </motion.div>
-      </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-5 pb-5 text-[11px] text-zinc-500 sm:px-8 sm:pb-6">
+        <span>© Omni AI · {new Date().getFullYear()}</span>
+        <span className="hidden font-mono uppercase tracking-[0.18em] sm:inline">Built with care</span>
+      </footer>
+    </div>
+  );
+}
+
+function FeaturePill({ icon, label }) {
+  return (
+    <div className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-medium text-zinc-200 backdrop-blur-xl">
+      <span className="text-blue-300">{icon}</span>
+      {label}
     </div>
   );
 }
@@ -125,7 +143,7 @@ function PreviewCard() {
       <motion.div
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="relative h-[460px] w-[420px] overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60 shadow-lift backdrop-blur-2xl"
+        className="relative w-[380px] overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60 shadow-lift backdrop-blur-2xl xl:w-[440px]"
       >
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400">
@@ -140,15 +158,13 @@ function PreviewCard() {
         </div>
         <div className="space-y-3 p-6 font-mono text-xs leading-relaxed text-zinc-300">
           <Line tag="vision">analyse_image(<span className="text-blue-300">"./cat.jpg"</span>)</Line>
-          <Line tag="→" muted>
-            orange tabby · sitting · soft daylight
-          </Line>
+          <Line tag="→" muted>orange tabby · sitting · soft daylight</Line>
           <Line tag="audio">transcribe(<span className="text-rose-300">"./voice.mp3"</span>)</Line>
           <Line tag="→" muted>"meeting starts at 5pm sharp"</Line>
           <Line tag="share">share_whatsapp(result)</Line>
           <Line tag="✓" success>shared.</Line>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-black/30 px-5 py-3 backdrop-blur-xl">
+        <div className="border-t border-white/10 bg-black/30 px-5 py-3 backdrop-blur-xl">
           <div className="flex items-center justify-between text-[11px] text-zinc-400">
             <span className="font-mono uppercase tracking-[0.2em]">omni cli</span>
             <span>connected</span>
@@ -163,7 +179,7 @@ function PreviewCard() {
 function Line({ tag, children, muted, success }) {
   return (
     <div className="flex gap-3">
-      <span className={`min-w-[64px] uppercase tracking-[0.18em] ${success ? 'text-emerald-400' : 'text-zinc-500'}`}>
+      <span className={`min-w-[60px] uppercase tracking-[0.18em] ${success ? 'text-emerald-400' : 'text-zinc-500'}`}>
         {tag}
       </span>
       <span className={muted ? 'text-zinc-500' : 'text-zinc-200'}>{children}</span>

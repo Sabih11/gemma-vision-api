@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, Sparkles, Image as ImgIcon, AudioLines } from 'lucide-react';
+import { LogOut, Sparkles, Image as ImgIcon, AudioLines, Menu, X } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import { api } from '../lib/api';
 import { tap } from '../lib/motion';
@@ -12,6 +12,7 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const [history, setHistory] = useState([]);
   const [tab, setTab] = useState('vision');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
@@ -25,36 +26,51 @@ export default function Dashboard() {
   useEffect(() => { refresh(); }, [refresh]);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-zinc-950 text-white" data-testid="dashboard-page">
+    <div className="relative min-h-screen overflow-x-hidden bg-zinc-950 text-white" data-testid="dashboard-page">
       {/* Ambient background */}
-      <div className="blob -top-32 -left-32 h-[480px] w-[480px] bg-blue-700/60" />
-      <div className="blob bottom-[-15%] right-[-10%] h-[420px] w-[420px] bg-fuchsia-600/40" />
-      <div className="bg-grain absolute inset-0" />
+      <div className="blob -top-24 -left-24 h-[360px] w-[360px] bg-blue-700/60 sm:h-[460px] sm:w-[460px]" />
+      <div className="blob bottom-[-15%] right-[-10%] h-[320px] w-[320px] bg-fuchsia-600/40 sm:h-[420px] sm:w-[420px]" />
 
       {/* Sticky glass header */}
-      <header className="sticky top-0 z-20 border-b border-white/5 bg-zinc-950/60 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="flex items-center gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-glow ring-1 ring-white/20">
+      <header className="sticky top-0 z-20 border-b border-white/5 bg-zinc-950/70 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="flex min-w-0 items-center gap-3">
+            <div className="grid h-9 w-9 flex-none place-items-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-glow ring-1 ring-white/20">
               <span className="font-heading text-base font-bold">O</span>
             </div>
-            <div>
-              <p className="font-heading text-lg font-semibold leading-none tracking-tight">OMNI.</p>
+            <div className="min-w-0">
+              <p className="font-heading text-base font-semibold leading-none tracking-tight sm:text-lg">OMNI.</p>
               <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-500">multimodal · ai</p>
             </div>
           </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="flex items-center gap-3">
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Mobile: history button */}
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              data-testid="open-history-drawer"
+              className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-zinc-200 transition-all hover:border-white/20 lg:hidden"
+              aria-label="Open history"
+            >
+              <Menu size={16} />
+            </button>
+
             {user?.picture && (
               <img
                 src={user.picture}
                 alt={user.name || user.email}
                 referrerPolicy="no-referrer"
-                className="h-9 w-9 rounded-full border border-white/10 object-cover ring-1 ring-white/10"
+                className="h-9 w-9 flex-none rounded-full border border-white/10 object-cover ring-1 ring-white/10"
               />
             )}
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-semibold leading-tight" data-testid="user-name">{user?.name || user?.email}</p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">{user?.email}</p>
+            <div className="hidden min-w-0 text-right md:block">
+              <p className="truncate text-sm font-semibold leading-tight" data-testid="user-name">
+                {user?.name || user?.email}
+              </p>
+              <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">
+                {user?.email}
+              </p>
             </div>
             <motion.button
               type="button"
@@ -64,14 +80,14 @@ export default function Dashboard() {
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-zinc-200 transition-all hover:border-red-400/40 hover:bg-red-500/10 hover:text-red-300"
             >
               <LogOut size={14} />
-              Logout
+              <span className="hidden sm:inline">Logout</span>
             </motion.button>
-          </motion.div>
+          </div>
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-10 lg:grid-cols-3">
-        <section className="space-y-8 lg:col-span-2">
+      <main className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[1fr_320px] lg:gap-8 lg:py-10 xl:grid-cols-[1fr_360px]">
+        <section className="min-w-0 space-y-6 sm:space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
@@ -81,7 +97,7 @@ export default function Dashboard() {
               <Sparkles size={12} className="text-blue-300" />
               Workspace
             </p>
-            <h1 className="font-heading text-4xl font-semibold tracking-tight md:text-5xl">
+            <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
               Hey {(user?.name || 'there').split(' ')[0]}. <br />
               <span className="bg-gradient-to-br from-blue-300 via-indigo-300 to-fuchsia-300 bg-clip-text text-transparent">
                 What shall we analyze today?
@@ -126,34 +142,77 @@ export default function Dashboard() {
           </AnimatePresence>
         </section>
 
+        {/* Desktop sidebar */}
         <motion.aside
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-          className="space-y-4 lg:sticky lg:top-[5.5rem] lg:self-start"
+          className="hidden space-y-4 lg:sticky lg:top-[5.5rem] lg:block lg:self-start"
         >
-          <div className="flex items-end justify-between">
-            <h2 className="font-heading text-2xl font-semibold tracking-tight">Recent</h2>
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500" data-testid="history-count">
-              {history.length} item{history.length === 1 ? '' : 's'}
-            </span>
-          </div>
-          <div className="max-h-[70vh] overflow-y-auto pr-1">
+          <SidebarHeader count={history.length} />
+          <div className="max-h-[calc(100vh-8rem)] overflow-y-auto pr-1">
             <HistoryList items={history} onChanged={refresh} />
           </div>
         </motion.aside>
       </main>
 
-      <footer className="relative z-10 border-t border-white/5 bg-zinc-950/50 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-            Omni · Gemma Vision · Whisper-1 · Emergent Auth
-          </p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-            v1.0 · iOS app available
-          </p>
+      {/* Mobile drawer */}
+      <AnimatePresence>
+        {drawerOpen && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
+            onClick={() => setDrawerOpen(false)}
+          />
+        )}
+        {drawerOpen && (
+          <motion.aside
+            key="drawer"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed right-0 top-0 z-40 flex h-full w-[85vw] max-w-sm flex-col border-l border-white/10 bg-zinc-950/95 p-5 backdrop-blur-2xl lg:hidden"
+            data-testid="history-drawer"
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <SidebarHeader count={history.length} />
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
+                aria-label="Close history"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <div className="-mr-2 flex-1 overflow-y-auto pr-2">
+              <HistoryList items={history} onChanged={refresh} />
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      <footer className="relative z-10 mt-6 border-t border-white/5 bg-zinc-950/50 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-1 px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 sm:flex-row sm:items-center sm:px-6 sm:py-4">
+          <span>Omni · Gemma Vision · Whisper-1 · Emergent Auth</span>
+          <span>v1.0 · iOS app available</span>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function SidebarHeader({ count }) {
+  return (
+    <div className="flex items-end justify-between gap-3">
+      <h2 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">Recent</h2>
+      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500" data-testid="history-count">
+        {count} item{count === 1 ? '' : 's'}
+      </span>
     </div>
   );
 }
@@ -164,7 +223,7 @@ function Tab({ active, onClick, children, icon, testId }) {
       type="button"
       onClick={onClick}
       data-testid={testId}
-      className={`relative z-10 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-colors ${
+      className={`relative z-10 inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-colors sm:px-4 ${
         active ? 'text-white' : 'text-zinc-400 hover:text-zinc-200'
       }`}
     >

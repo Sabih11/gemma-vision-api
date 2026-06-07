@@ -1,0 +1,111 @@
+{
+  "theme": "Light",
+  "archetype": "Archetype 4: Swiss & High-Contrast",
+  "core_principles": [
+    "Fusion over Imitation: Combine chat UI with dense dashboard history and Swiss brutalist typography.",
+    "Emotion First: The UI should feel authoritative, objective, and lightning fast.",
+    "Content is king: The chat history and AI results are the focal points.",
+    "Negative Space: Use generous padding around the chat input and messages to give breathing room.",
+    "Contrast: Stark white background, sharp black borders, and signal colors for state."
+  ],
+  "colors": {
+    "background": {
+      "primary": "#FFFFFF",
+      "secondary": "#F9F9F9",
+      "tertiary": "#E4E4E7"
+    },
+    "text": {
+      "primary": "#000000",
+      "secondary": "#52525B",
+      "inverse": "#FFFFFF"
+    },
+    "accents": {
+      "primary": "#002FA7", 
+      "danger": "#FF2400", 
+      "warning": "#FFD700",
+      "whatsapp": "#25D366" 
+    },
+    "borders": "#000000",
+    "surface": {
+      "glass": "bg-white/90 backdrop-blur-xl border-b-2 border-black",
+      "brutalist_shadow": "shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "heading": "'Outfit', sans-serif",
+      "body": "'IBM Plex Sans', sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    },
+    "scales": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-none",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-bold tracking-tight",
+      "h4": "text-lg sm:text-xl font-semibold",
+      "body": "text-base leading-relaxed text-zinc-900",
+      "small": "text-xs font-mono uppercase tracking-widest text-zinc-600",
+      "code": "text-sm font-mono bg-zinc-100 p-1 border border-zinc-300"
+    }
+  },
+  "spacing_and_layout": {
+    "generous_spacing": "Use p-6, p-8, p-12 for containers.",
+    "bento_grid": "For history of results, use a tight dashboard grid: grid-cols-1 md:grid-cols-3 gap-6. Each past result is a clean rectangular block with a solid border.",
+    "chat_layout": "Center-aligned main column for chat max-w-4xl, with a fixed sidebar for history (w-72). Use flex-1 for the chat view to push the input to the bottom.",
+    "alignment": "Left-align dense text and messages. User messages can be right-aligned with black background, AI messages left-aligned with white background and solid black border."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#002FA7] text-white hover:bg-[#002FA7]/90 rounded-none px-6 py-3 font-bold uppercase tracking-wide transition-all border-2 border-transparent focus:border-black",
+      "secondary": "bg-transparent border-2 border-black text-black hover:bg-black hover:text-white rounded-none px-6 py-3 font-bold uppercase transition-all",
+      "icon": "p-3 border-2 border-transparent hover:border-black transition-all rounded-none bg-zinc-100 hover:bg-zinc-200",
+      "whatsapp": "bg-[#25D366] text-white hover:bg-[#25D366]/90 border-2 border-[#25D366] hover:border-black flex items-center gap-2 rounded-none px-4 py-2 font-bold uppercase"
+    },
+    "inputs": {
+      "text": "border-2 border-black focus:ring-0 focus:outline-none rounded-none bg-white p-4 w-full text-lg placeholder:text-zinc-500",
+      "multimodal_container": "relative border-2 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex flex-col p-4 transition-all focus-within:translate-x-[2px] focus-within:translate-y-[2px] focus-within:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+    },
+    "cards": {
+      "history_item": "border-2 border-black bg-white p-4 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer",
+      "result_block": "border-2 border-black bg-zinc-50 p-6 my-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+    },
+    "badges": {
+      "audio": "bg-[#FF2400] text-white text-xs font-mono uppercase px-2 py-1 border border-black",
+      "image": "bg-[#002FA7] text-white text-xs font-mono uppercase px-2 py-1 border border-black",
+      "text": "bg-black text-white text-xs font-mono uppercase px-2 py-1 border border-black"
+    }
+  },
+  "media": {
+    "icons_library": "@phosphor-icons/react",
+    "image_urls": [
+      {
+        "url": "https://images.pexels.com/photos/4252893/pexels-photo-4252893.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "category": "login_background",
+        "description": "Abstract geometric pattern for the login page background, applied to the right half of the split screen layout."
+      }
+    ]
+  },
+  "motion_and_interactions": {
+    "hover_states": "Hard shadows that compress on click. E.g., shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] becomes shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] with translate-y-[4px] and translate-x-[4px].",
+    "transitions": "transition-all duration-200 ease-in-out",
+    "recording_state": "Pulse animation on microphone icon when recording, using Signal Red #FF2400, adding a border-red-500 to the container."
+  },
+  "specific_views": {
+    "login": "Split screen layout. Left: minimal login form with absolute center alignment, 'Sign in with Google' prominent button (black outline style). Right: the abstract geometric image filling the pane. Title: 'Omni' in Outfit Black 6xl.",
+    "main_chat": "Two-pane layout. Left Sidebar (History): Light grey background #F9F9F9, right border 2px solid black. Main Area: White background. Bottom anchored input area with buttons for image upload, audio record, and submit. The multimodal input area uses the brutalist shadow.",
+    "message_bubbles": "User: Right aligned, max-w-[80%], black background, white text, 0px border radius. AI: Left aligned, max-w-[85%], white background, black text, 2px solid black border, 0px border radius.",
+    "share_whatsapp": "A prominent WhatsApp green button attached to each AI response block footer, floating right."
+  },
+  "accessibility": {
+    "contrast": "All text maintains minimum 4.5:1 ratio. Heavy use of black on white and white on black.",
+    "focus": "Focus states use 2px solid black outline or background color inversion.",
+    "test_attributes": "All interactive elements must have data-testid attributes (e.g., data-testid='mic-button', data-testid='chat-input', data-testid='upload-image-button', data-testid='whatsapp-share-button', data-testid='login-button')."
+  },
+  "instructions_to_main_agent": [
+    "Use Phosphor Icons for all UI icons (Microphone, Image, PaperPlaneRight, WhatsappLogo, SignOut, etc.). E.g., yarn add @phosphor-icons/react",
+    "Install Google Fonts 'Outfit' and 'IBM Plex Sans' in index.html or global css.",
+    "Build the application using pure Tailwind CSS and standard React components. If using Shadcn UI, aggressively customize the border-radius to 0px (rounded-none) and borders to 2px solid black for the neo-brutalist/Swiss feel.",
+    "Ensure the audio transcription flow shows clear visual feedback (pulse/red color) when recording.",
+    "In the chat view, display images uploaded by the user above their text prompt as part of the message block.",
+    "Implement the WhatsApp share link using the wa.me format: https://wa.me/?text=<url_encoded_text>."
+  ]
+}

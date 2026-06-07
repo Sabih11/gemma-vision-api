@@ -33,54 +33,68 @@ export default function Dashboard() {
 
       {/* Sticky glass header */}
       <header className="sticky top-0 z-20 border-b border-white/5 bg-zinc-950/70 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="flex min-w-0 items-center gap-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4">
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex min-w-0 items-center gap-2.5"
+          >
             <div className="grid h-9 w-9 flex-none place-items-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-glow ring-1 ring-white/20">
               <span className="font-heading text-base font-bold">O</span>
             </div>
-            <div className="min-w-0">
-              <p className="font-heading text-base font-semibold leading-none tracking-tight sm:text-lg">OMNI.</p>
-              <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-500">multimodal · ai</p>
-            </div>
+            <p className="font-heading text-lg font-semibold tracking-tight">OMNI<span className="text-blue-400">.</span></p>
           </motion.div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Mobile: history button */}
+            {/* Mobile-only history toggle */}
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
               data-testid="open-history-drawer"
-              className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-zinc-200 transition-all hover:border-white/20 lg:hidden"
               aria-label="Open history"
+              className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-zinc-200 transition-all hover:border-white/20 hover:bg-white/[0.08] lg:hidden"
             >
               <Menu size={16} />
             </button>
 
-            {user?.picture && (
-              <img
-                src={user.picture}
-                alt={user.name || user.email}
-                referrerPolicy="no-referrer"
-                className="h-9 w-9 flex-none rounded-full border border-white/10 object-cover ring-1 ring-white/10"
-              />
-            )}
-            <div className="hidden min-w-0 text-right md:block">
-              <p className="truncate text-sm font-semibold leading-tight" data-testid="user-name">
-                {user?.name || user?.email}
-              </p>
-              <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-                {user?.email}
-              </p>
+            {/* User chip — compact pill on small, full pill on >=sm */}
+            <div
+              data-testid="user-chip"
+              className="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] py-1 pl-1 pr-3 backdrop-blur-xl sm:gap-3 sm:pl-1.5 sm:pr-4"
+            >
+              {user?.picture ? (
+                <img
+                  src={user.picture}
+                  alt={user.name || user.email}
+                  referrerPolicy="no-referrer"
+                  className="h-8 w-8 flex-none rounded-full object-cover ring-1 ring-white/20"
+                />
+              ) : (
+                <div className="grid h-8 w-8 flex-none place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-semibold ring-1 ring-white/20">
+                  {(user?.name || user?.email || '?').slice(0, 1).toUpperCase()}
+                </div>
+              )}
+              <div className="hidden min-w-0 max-w-[160px] flex-col sm:flex">
+                <p data-testid="user-name" className="truncate text-sm font-semibold leading-tight">
+                  {user?.name || user?.email}
+                </p>
+                {user?.name && user?.email && (
+                  <p className="truncate text-[11px] text-zinc-400">{user.email}</p>
+                )}
+              </div>
             </div>
+
             <motion.button
               type="button"
               onClick={logout}
               data-testid="logout-button"
               {...tap}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-zinc-200 transition-all hover:border-red-400/40 hover:bg-red-500/10 hover:text-red-300"
+              aria-label="Logout"
+              className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-zinc-300 transition-all hover:border-red-400/40 hover:bg-red-500/10 hover:text-red-300 sm:h-auto sm:w-auto sm:px-4 sm:py-2"
             >
-              <LogOut size={14} />
-              <span className="hidden sm:inline">Logout</span>
+              <LogOut size={15} />
+              <span className="ml-2 hidden text-xs font-semibold tracking-wide sm:inline">Logout</span>
             </motion.button>
           </div>
         </div>

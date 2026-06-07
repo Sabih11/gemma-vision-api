@@ -38,10 +38,17 @@ html, body, #root {
 }
 
 /* Subtle scrollbar */
-::-webkit-scrollbar { width: 10px; height: 10px; }
+html { scrollbar-gutter: stable; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.10);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); background-clip: content-box; }
+* { scrollbar-color: rgba(255,255,255,0.12) transparent; scrollbar-width: thin; }
 
 /* Audio element styling for dark UI */
 audio { filter: invert(0.9) hue-rotate(180deg); }

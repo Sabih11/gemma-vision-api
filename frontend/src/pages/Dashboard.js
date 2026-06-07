@@ -37,7 +37,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-zinc-950 text-white" data-testid="dashboard-page">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-zinc-950 text-white" data-testid="dashboard-page">
       {/* Ambient background */}
       <div className="blob -top-24 -left-24 h-[360px] w-[360px] bg-blue-700/60 sm:h-[460px] sm:w-[460px]" />
       <div className="blob bottom-[-15%] right-[-10%] h-[320px] w-[320px] bg-fuchsia-600/40 sm:h-[420px] sm:w-[420px]" />
@@ -111,7 +111,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[1fr_320px] lg:gap-8 lg:py-10 xl:grid-cols-[1fr_360px]">
+      <main className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[1fr_320px] lg:gap-8 lg:py-10 xl:grid-cols-[1fr_360px]">
         <section className="min-w-0 space-y-6 sm:space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -172,10 +172,10 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-          className="hidden space-y-4 lg:sticky lg:top-[5.5rem] lg:block lg:self-start"
+          className="hidden flex-col gap-4 lg:sticky lg:top-[5.5rem] lg:flex lg:max-h-[calc(100vh-7rem)] lg:self-start"
         >
           <SidebarHeader count={history.length} />
-          <div className="max-h-[calc(100vh-8rem)] overflow-y-auto pr-1">
+          <div className="min-h-0 flex-1 overflow-y-auto" style={{ scrollbarGutter: 'stable' }}>
             <HistoryList items={history} onChanged={refresh} />
           </div>
         </motion.aside>
@@ -221,7 +221,7 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      <footer className="relative z-10 mt-6 border-t border-white/5 bg-zinc-950/50 backdrop-blur-xl">
+      <footer className="relative z-10 border-t border-white/5 bg-zinc-950/50 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-2 px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-zinc-500 sm:flex-row sm:items-center sm:px-6 sm:py-4">
           <span>Omni · Gemma Vision · Whisper-1 · Emergent Auth</span>
           <div className="flex items-center gap-4">

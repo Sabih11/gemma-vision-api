@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { flushSync } from 'react-dom';
 import { api } from '../lib/api';
 import { useAuth } from '../lib/auth';
 
@@ -25,9 +26,12 @@ export default function AuthCallback() {
       }
       try {
         const { data } = await api.post('/auth/google', { session_id: sessionId });
-        setUser(data.user);
-        window.history.replaceState({}, '', '/dashboard');
-        navigate('/dashboard', { replace: true, state: { user: data.user } });
+        // Commit user state synchronously so <Protected> sees it on the next render
+        flushSync(() => {
+          setUser(data.user);
+        });
+        // navigate AFTER user is committed — Routes will now match /dashboard with user truthy
+        navigate('/dashboard', { replace: true });
       } catch (e) {
         console.error('Auth exchange failed', e);
         navigate('/login', { replace: true });

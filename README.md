@@ -35,13 +35,33 @@ python client.py
 python client.py --mode ask
 ```
 
+## Angular UI
+
+Interactive tester for image files/URLs and audio file bytes.
+
+```powershell
+# Terminal 1 — API
+uvicorn app:app --host 127.0.0.1 --port 8000
+
+# Terminal 2 — Angular (proxies /api → :8000)
+cd frontend
+npm start
+```
+
+Open [http://localhost:4200](http://localhost:4200) — upload an image and/or audio, enter a question, and send.
+
+- **Images:** `google/gemma-4-31B-it` (default)
+- **Audio:** use `google/gemma-4-E2B-it` (audio is E2B/E4B only)
+
 ## Endpoints
 
-| Method | Path       | Description                                                        |
-| ------ | ---------- | ------------------------------------------------------------------ |
-| GET    | `/health`  | Config status (`hf_token_configured`, router URL, model id)        |
-| POST   | `/v1/chat` | JSON messages; set `"stream": true` to aggregate streamed chunks   |
-| POST   | `/v1/ask`  | Form: `question` + `image_url` or uploaded `image`; optional `stream` |
+
+| Method | Path       | Description                                                       |
+| ------ | ---------- | ----------------------------------------------------------------- |
+| GET    | `/health`  | Config status (`hf_token_configured`, router URL, model id)       |
+| POST   | `/v1/chat` | JSON messages (`text`, `image`, `audio` parts); optional `stream` |
+| POST   | `/v1/ask`  | Multipart: `question` + image and/or audio (file or URL); `model` |
+
 
 ## How it works
 
@@ -57,4 +77,4 @@ client = OpenAI(
 client.chat.completions.create(model="google/gemma-4-31B-it", messages=[...])
 ```
 
-Image inputs are converted to OpenAI-style `image_url` parts (HTTP URLs or `data:image/jpeg;base64,...`).
+Image inputs use OpenAI-style `image_url` parts. Audio uses `input_audio` with base64 bytes (`wav`, `mp3`, etc.).

@@ -1,0 +1,116 @@
+{
+  "theme_archetype": {
+    "domain": "Multimodal AI Assistant",
+    "theme": "DARK",
+    "archetype": "5 (Luxury / Premium Tech)",
+    "description": "A polished, cinematic, premium SaaS aesthetic. Avoid harsh brutalist elements. Instead, leverage subtle glows, smooth corner radii, layered depth, soft borders, and rich micro-interactions (similar to Linear or Vercel)."
+  },
+  "typography": {
+    "strategy": "Modern Tech pairing, ensuring a clear, readable but distinctive look.",
+    "fonts": {
+      "headings": "Outfit",
+      "body": "Manrope",
+      "mono": "JetBrains Mono"
+    },
+    "hierarchy": {
+      "h1": "text-4xl sm:text-5xl font-semibold tracking-tight text-white",
+      "h2": "text-2xl sm:text-3xl font-medium tracking-tight text-white/90",
+      "h3": "text-xl font-medium tracking-tight text-white/80",
+      "body": "text-base font-normal leading-relaxed text-zinc-400",
+      "small": "text-sm font-medium tracking-wide text-zinc-500",
+      "overline": "text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500"
+    }
+  },
+  "colors": {
+    "background": {
+      "base": "bg-zinc-950",
+      "surface": "bg-zinc-900/50",
+      "glass": "bg-black/40 backdrop-blur-xl"
+    },
+    "borders": {
+      "subtle": "border-white/5",
+      "default": "border-white/10",
+      "active": "border-blue-500/50"
+    },
+    "text": {
+      "primary": "text-white",
+      "secondary": "text-zinc-400",
+      "muted": "text-zinc-500"
+    },
+    "accents": {
+      "primary": "bg-blue-600 hover:bg-blue-500 text-white",
+      "primary_glow": "shadow-[0_0_20px_rgba(37,99,235,0.3)]",
+      "recording": "bg-red-500 hover:bg-red-400 text-white",
+      "recording_glow": "shadow-[0_0_24px_rgba(239,68,68,0.5)]",
+      "whatsapp": "bg-[#25D366] hover:bg-[#20bd5c] text-white"
+    }
+  },
+  "spacing_and_layout": {
+    "generous_spacing": true,
+    "corners": {
+      "outer_cards": "rounded-3xl",
+      "inner_cards": "rounded-2xl",
+      "buttons_inputs": "rounded-xl"
+    },
+    "shadows": {
+      "ambient": "shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
+      "glow": "shadow-[0_0_15px_rgba(255,255,255,0.05)]",
+      "hover_lift": "shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+    },
+    "page_structure": "max-w-6xl mx-auto px-6 py-12 md:py-24"
+  },
+  "motion_and_interactions": {
+    "library": "framer-motion",
+    "installation": "npm install framer-motion lucide-react",
+    "variants": {
+      "page_entrance": {
+        "initial": { "opacity": 0, "y": 20 },
+        "animate": { "opacity": 1, "y": 0, "transition": { "duration": 0.6, "ease": [0.16, 1, 0.3, 1] } }
+      },
+      "stagger_container": {
+        "animate": { "transition": { "staggerChildren": 0.1 } }
+      },
+      "card_hover": {
+        "whileHover": { "y": -4, "scale": 1.01, "transition": { "duration": 0.2 } }
+      },
+      "mic_pulse": {
+        "animate": { "scale": [1, 1.15, 1], "boxShadow": ["0px 0px 0px rgba(239,68,68,0)", "0px 0px 20px rgba(239,68,68,0.5)", "0px 0px 0px rgba(239,68,68,0)"], "transition": { "duration": 1.5, "repeat": "Infinity" } }
+      }
+    }
+  },
+  "components": {
+    "buttons": "Premium buttons: padding px-6 py-3, text-sm font-medium, rounded-xl. Add 'relative overflow-hidden' for subtle hover shine effects. Use transition-all duration-200.",
+    "cards": "Premium glass cards: bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8. Inner content spaced generously (gap-6).",
+    "inputs": "Inputs: bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200.",
+    "file_upload_zone": "Dashed border area: border-2 border-dashed border-zinc-800 rounded-2xl p-10 flex flex-col items-center justify-center gap-4 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-pointer.",
+    "loading_skeletons": "Shimmer effect: bg-zinc-800/50 animate-pulse rounded-xl.",
+    "history_item": "Row layout: flex items-center justify-between p-4 bg-zinc-900/30 border border-white/5 rounded-2xl hover:bg-zinc-900/60 transition-colors group.",
+    "whatsapp_cta": "Floating/inline button: bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 hover:bg-[#25D366] hover:text-white rounded-full px-4 py-2 flex items-center gap-2 text-xs font-semibold transition-all."
+  },
+  "media": {
+    "icons_library": "lucide-react for standard UI.",
+    "images": {
+      "login_background": {
+        "url": "https://images.unsplash.com/photo-1663970206579-c157cba7edda?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTV8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjBmbHVpZCUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzgwODUyNzkwfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Dark blue purple abstract fluid wallpaper, used as an ambient background in the login screen (with heavy blur)."
+      },
+      "user_avatar_placeholder": {
+        "url": "https://images.unsplash.com/photo-1506863530036-1efeddceb993?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzR8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdCUyMHByb2ZpbGV8ZW58MHx8fHwxNzgwODUyNzkwfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Professional profile portrait for the logged-in user placeholder."
+      }
+    }
+  },
+  "accessibility_and_testing": {
+    "testing_attributes": "All interactive elements MUST include data-testid (e.g., data-testid='upload-image-button', data-testid='record-audio-btn', data-testid='whatsapp-share-btn').",
+    "focus_states": "Ensure buttons and inputs have clear focus:ring-2 visible for keyboard navigation."
+  },
+  "instructions_to_main_agent": [
+    "Create a beautiful Login screen utilizing the provided abstract background with an overlay/blur to give a cinematic entrance.",
+    "Implement the Dashboard with a sticky glassmorphic header.",
+    "Build the two main functional panels (Image Analysis and Audio Transcribe) as Framer Motion staggered cards.",
+    "For the audio section, use Framer Motion for the pulsing mic button when actively 'recording'.",
+    "Include an interactive Recent History list where each item reveals a WhatsApp Share button and a Delete button on hover.",
+    "Ensure the entire app responds beautifully on mobile, stacking the upload and audio panels cleanly.",
+    "Apply data-testid to all buttons and actionable areas."
+  ]
+}

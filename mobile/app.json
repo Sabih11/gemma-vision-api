@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Omni",
+    "slug": "omni",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "scheme": "omni",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#09090b"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.omni.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Omni records audio to transcribe with Whisper.",
+        "NSPhotoLibraryUsageDescription": "Omni accesses your photos so you can analyze them with AI.",
+        "NSCameraUsageDescription": "Omni uses the camera to capture images for analysis."
+      }
+    },
+    "android": {
+      "package": "com.omni.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#09090b"
+      },
+      "permissions": ["RECORD_AUDIO", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+    },
+    "extra": {
+      "backendUrl": "https://whispr-transcribe.preview.emergentagent.com"
+    },
+    "plugins": [
+      ["expo-image-picker", { "photosPermission": "Omni accesses your photos so you can analyze them with AI." }],
+      ["expo-av", { "microphonePermission": "Omni records audio to transcribe with Whisper." }]
+    ]
+  }
+}
